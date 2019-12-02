@@ -1,4 +1,4 @@
-# Copyright 2018 The TensorFlow Authors All Rights Reserved.
+﻿# Copyright 2018 The TensorFlow Authors All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,6 +53,11 @@ import os
 import tensorflow as tf
 from deeplab import common
 from deeplab import input_preprocess
+import configparser
+config = configparser.ConfigParser(allow_no_value=True)    # 注意大小寫
+config.read('C:/tensorflow/models/research/deeplab/config.ini')   # 配置檔案的路徑
+
+Section = config['deeplab']
 
 # Named tuple to describe the dataset properties.
 DatasetDescriptor = collections.namedtuple(
@@ -96,11 +101,24 @@ _ADE20K_INFORMATION = DatasetDescriptor(
     ignore_label=0,
 )
 
+_WOOD_INFORMATION = DatasetDescriptor(
+    splits_to_sizes={
+        'train': int(Section['train_splits']),
+        'train_aug': 0,
+        'trainval': 0,
+        'val': 0,
+    },
+    num_classes=int(Section['num_classes']),
+    ignore_label=255,
+)
+
 _DATASETS_INFORMATION = {
     'cityscapes': _CITYSCAPES_INFORMATION,
     'pascal_voc_seg': _PASCAL_VOC_SEG_INFORMATION,
     'ade20k': _ADE20K_INFORMATION,
+    'wood': _WOOD_INFORMATION,
 }
+
 
 # Default file pattern of TFRecord of TensorFlow Example.
 _FILE_PATTERN = '%s-*'

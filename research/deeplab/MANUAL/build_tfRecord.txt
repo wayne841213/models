@@ -1,0 +1,2 @@
+cd .\deeplab\datasets
+python ./build_voc2012_data.py \  --image_folder="./pascal_voc_seg/VOCdevkit/VOC2012/JPEGImages" \  --semantic_segmentation_folder="./pascal_voc_seg/VOCdevkit/VOC2012/SegmentationClassRaw" \  --list_folder="./pascal_voc_seg/VOCdevkit/VOC2012/ImageSets/Segmentation" \  --image_format="jpg" \  --output_dir="./pascal_voc_seg/tfrecord"

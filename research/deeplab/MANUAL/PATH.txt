@@ -1,0 +1,2 @@
+cd C:\tensorflow\models\research
+SET PYTHONPATH=%cd%;%cd%\slim

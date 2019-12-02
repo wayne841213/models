@@ -21,33 +21,39 @@ from tensorflow.python.tools import freeze_graph
 from deeplab import common
 from deeplab import input_preprocess
 from deeplab import model
+import configparser
+config = configparser.ConfigParser(allow_no_value=True)    # 注意大小寫
+config.read('C:/tensorflow/models/research/deeplab/config.ini')   # 配置檔案的路徑
+
+Section = config['deeplab']
 
 slim = tf.contrib.slim
+
 flags = tf.app.flags
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string('checkpoint_path', None, 'Checkpoint path')
+flags.DEFINE_string('checkpoint_path', Section['checkpoint_dir'], 'Checkpoint path')
 
-flags.DEFINE_string('export_path', None,
+flags.DEFINE_string('export_path', Section['export_path'],
                     'Path to output Tensorflow frozen graph.')
 
-flags.DEFINE_integer('num_classes', 21, 'Number of classes.')
+flags.DEFINE_integer('num_classes', Section['num_classes'], 'Number of classes.')
 
-flags.DEFINE_multi_integer('crop_size', [513, 513],
+flags.DEFINE_multi_integer('crop_size', Section['predict_crop_size'].split(','),
                            'Crop size [height, width].')
 
 # For `xception_65`, use atrous_rates = [12, 24, 36] if output_stride = 8, or
 # rates = [6, 12, 18] if output_stride = 16. For `mobilenet_v2`, use None. Note
 # one could use different atrous_rates/output_stride during training/evaluation.
-flags.DEFINE_multi_integer('atrous_rates', None,
+flags.DEFINE_multi_integer('atrous_rates', Section['atrous_rates'].split(','),
                            'Atrous rates for atrous spatial pyramid pooling.')
 
-flags.DEFINE_integer('output_stride', 8,
+flags.DEFINE_integer('output_stride', Section['output_stride'],
                      'The ratio of input to output spatial resolution.')
 
 # Change to [0.5, 0.75, 1.0, 1.25, 1.5, 1.75] for multi-scale inference.
-flags.DEFINE_multi_float('inference_scales', [1.0],
+flags.DEFINE_multi_float('inference_scales', Section['inference_scales'].split(','),
                          'The scales to resize images for inference.')
 
 flags.DEFINE_bool('add_flipped_images', False,

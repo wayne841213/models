@@ -21,6 +21,11 @@ import tensorflow as tf
 from deeplab import common
 from deeplab import model
 from deeplab.datasets import data_generator
+import configparser
+config = configparser.ConfigParser(allow_no_value=True)    # 注意大小寫
+config.read('C:/tensorflow/models/research/deeplab/config.ini')   # 配置檔案的路徑
+
+Section = config['deeplab']
 
 flags = tf.app.flags
 FLAGS = flags.FLAGS
@@ -29,16 +34,16 @@ flags.DEFINE_string('master', '', 'BNS name of the tensorflow server')
 
 # Settings for log directories.
 
-flags.DEFINE_string('eval_logdir', None, 'Where to write the event logs.')
+flags.DEFINE_string('eval_logdir', Section['eval_logdir'], 'Where to write the event logs.')
 
-flags.DEFINE_string('checkpoint_dir', None, 'Directory of model checkpoints.')
+flags.DEFINE_string('checkpoint_dir', Section['train_logdir'], 'Directory of model checkpoints.')
 
 # Settings for evaluating the model.
 
 flags.DEFINE_integer('eval_batch_size', 1,
                      'The number of images in each batch during evaluation.')
 
-flags.DEFINE_list('eval_crop_size', '513,513',
+flags.DEFINE_list('eval_crop_size', config['predict_crop_size'],
                   'Image crop size [height, width] for evaluation.')
 
 flags.DEFINE_integer('eval_interval_secs', 60 * 5,
@@ -47,10 +52,10 @@ flags.DEFINE_integer('eval_interval_secs', 60 * 5,
 # For `xception_65`, use atrous_rates = [12, 24, 36] if output_stride = 8, or
 # rates = [6, 12, 18] if output_stride = 16. For `mobilenet_v2`, use None. Note
 # one could use different atrous_rates/output_stride during training/evaluation.
-flags.DEFINE_multi_integer('atrous_rates', None,
+flags.DEFINE_multi_integer('atrous_rates', Section['atrous_rates'].split(','),
                            'Atrous rates for atrous spatial pyramid pooling.')
 
-flags.DEFINE_integer('output_stride', 16,
+flags.DEFINE_integer('output_stride', Section['output_stride'],
                      'The ratio of input to output spatial resolution.')
 
 # Change to [0.5, 0.75, 1.0, 1.25, 1.5, 1.75] for multi-scale test.
@@ -67,13 +72,13 @@ flags.DEFINE_integer(
 
 # Dataset settings.
 
-flags.DEFINE_string('dataset', 'pascal_voc_seg',
+flags.DEFINE_string('dataset', Section['dataset'],
                     'Name of the segmentation dataset.')
 
-flags.DEFINE_string('eval_split', 'val',
+flags.DEFINE_string('eval_split', Section['vis_split'],
                     'Which split of the dataset used for evaluation')
 
-flags.DEFINE_string('dataset_dir', None, 'Where the dataset reside.')
+flags.DEFINE_string('dataset_dir', Section['dataset_dir'], 'Where the dataset reside.')
 
 flags.DEFINE_integer('max_number_of_evaluations', 0,
                      'Maximum number of eval iterations. Will loop '

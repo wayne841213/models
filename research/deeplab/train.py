@@ -24,6 +24,11 @@ from deeplab import common
 from deeplab import model
 from deeplab.datasets import data_generator
 from deeplab.utils import train_utils
+import configparser
+config = configparser.ConfigParser(allow_no_value=True)    # 注意大小寫
+config.read('C:/tensorflow/models/research/deeplab/config.ini')   # 配置檔案的路徑
+
+Section = config['deeplab']
 
 flags = tf.app.flags
 FLAGS = flags.FLAGS
@@ -50,7 +55,7 @@ flags.DEFINE_integer('task', 0, 'The task ID.')
 
 # Settings for logging.
 
-flags.DEFINE_string('train_logdir', None,
+flags.DEFINE_string('train_logdir', Section['train_logdir'],
                     'Where the checkpoint and logs are stored.')
 
 flags.DEFINE_integer('log_steps', 10,
@@ -63,13 +68,13 @@ flags.DEFINE_integer('save_summaries_secs', 600,
                      'How often, in seconds, we compute the summaries.')
 
 flags.DEFINE_boolean(
-    'save_summaries_images', False,
+    'save_summaries_images', Section['save_summaries_images'],
     'Save sample inputs, labels, and semantic predictions as '
     'images to summary.')
 
 # Settings for profiling.
 
-flags.DEFINE_string('profile_logdir', None,
+flags.DEFINE_string('profile_logdir', Section['profile_logdir'],
                     'Where the profile files are stored.')
 
 # Settings for training strategy.
@@ -91,7 +96,7 @@ flags.DEFINE_integer('learning_rate_decay_step', 2000,
 flags.DEFINE_float('learning_power', 0.9,
                    'The power value used in the poly learning policy.')
 
-flags.DEFINE_integer('training_number_of_steps', 30000,
+flags.DEFINE_integer('training_number_of_steps', Section['training_number_of_steps'],
                      'The number of steps used for training')
 
 flags.DEFINE_float('momentum', 0.9, 'The momentum value to use')
@@ -99,7 +104,7 @@ flags.DEFINE_float('momentum', 0.9, 'The momentum value to use')
 # When fine_tune_batch_norm=True, use at least batch size larger than 12
 # (batch size more than 16 is better). Otherwise, one could use smaller batch
 # size and set fine_tune_batch_norm=False.
-flags.DEFINE_integer('train_batch_size', 8,
+flags.DEFINE_integer('train_batch_size', Section['train_batch_size'],
                      'The number of images in each batch during training.')
 
 # For weight_decay, use 0.00004 for MobileNet-V2 or Xcpetion model variants.
@@ -107,7 +112,7 @@ flags.DEFINE_integer('train_batch_size', 8,
 flags.DEFINE_float('weight_decay', 0.00004,
                    'The value of the weight decay for training.')
 
-flags.DEFINE_list('train_crop_size', '513,513',
+flags.DEFINE_list('train_crop_size', Section['train_crop_size'],
                   'Image crop size [height, width] during training.')
 
 flags.DEFINE_float(
@@ -121,12 +126,13 @@ flags.DEFINE_boolean('upsample_logits', True,
 # Hyper-parameters for NAS training strategy.
 
 flags.DEFINE_float(
-    'drop_path_keep_prob', 1.0,
+    'drop_path_keep_prob', Section['drop_path_keep_prob'],
     'Probability to keep each path in the NAS cell when training.')
 
 # Settings for fine-tuning the network.
 
-flags.DEFINE_string('tf_initial_checkpoint', None,
+
+flags.DEFINE_string('tf_initial_checkpoint', Section['tf_initial_checkpoint'],
                     'The initial checkpoint in tensorflow format.')
 
 # Set to False if one does not want to re-use the trained classifier weights.
@@ -144,7 +150,7 @@ flags.DEFINE_float('slow_start_learning_rate', 1e-4,
 
 # Set to True if one wants to fine-tune the batch norm parameters in DeepLabv3.
 # Set to False and use small batch size to save GPU memory.
-flags.DEFINE_boolean('fine_tune_batch_norm', True,
+flags.DEFINE_boolean('fine_tune_batch_norm', Section['fine_tune_batch_norm'],
                      'Fine tune the batch norm parameters or not.')
 
 flags.DEFINE_float('min_scale_factor', 0.5,
@@ -159,15 +165,15 @@ flags.DEFINE_float('scale_factor_step_size', 0.25,
 # For `xception_65`, use atrous_rates = [12, 24, 36] if output_stride = 8, or
 # rates = [6, 12, 18] if output_stride = 16. For `mobilenet_v2`, use None. Note
 # one could use different atrous_rates/output_stride during training/evaluation.
-flags.DEFINE_multi_integer('atrous_rates', None,
+flags.DEFINE_multi_integer('atrous_rates', Section['atrous_rates'].split(','),
                            'Atrous rates for atrous spatial pyramid pooling.')
 
-flags.DEFINE_integer('output_stride', 16,
+flags.DEFINE_integer('output_stride', Section['output_stride'],
                      'The ratio of input to output spatial resolution.')
 
 # Hard example mining related flags.
 flags.DEFINE_integer(
-    'hard_example_mining_step', 0,
+    'hard_example_mining_step', Section['hard_example_mining_step'],
     'The training step in which exact hard example mining kicks off. Note we '
     'gradually reduce the mining percent to the specified '
     'top_k_percent_pixels. For example, if hard_example_mining_step=100K and '
@@ -176,7 +182,7 @@ flags.DEFINE_integer(
 
 
 flags.DEFINE_float(
-    'top_k_percent_pixels', 1.0,
+    'top_k_percent_pixels', Section['top_k_percent_pixels'],
     'The top k percent pixels (in terms of the loss values) used to compute '
     'loss during training. This is useful for hard pixel mining.')
 
@@ -186,13 +192,13 @@ flags.DEFINE_integer(
     'Steps to start quantized training. If < 0, will not quantize model.')
 
 # Dataset settings.
-flags.DEFINE_string('dataset', 'pascal_voc_seg',
+flags.DEFINE_string('dataset', Section['dataset'],
                     'Name of the segmentation dataset.')
 
 flags.DEFINE_string('train_split', 'train',
                     'Which split of the dataset to be used for training')
 
-flags.DEFINE_string('dataset_dir', None, 'Where the dataset reside.')
+flags.DEFINE_string('dataset_dir', Section['dataset_dir'], 'Where the dataset reside.')
 
 
 def _build_deeplab(iterator, outputs_to_num_classes, ignore_label):

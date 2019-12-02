@@ -33,6 +33,7 @@ _ADE20K = 'ade20k'
 _CITYSCAPES = 'cityscapes'
 _MAPILLARY_VISTAS = 'mapillary_vistas'
 _PASCAL = 'pascal'
+_WOOD= 'wood'
 
 # Max number of entries in the colormap for each dataset.
 _DATASET_MAX_ENTRIES = {
@@ -40,6 +41,7 @@ _DATASET_MAX_ENTRIES = {
     _CITYSCAPES: 256,
     _MAPILLARY_VISTAS: 66,
     _PASCAL: 256,
+    _WOOD: 37,
 }
 
 
@@ -326,6 +328,47 @@ def create_pascal_label_colormap():
   return colormap
 
 
+def create_wood_label_colormap():
+  return np.asarray([
+    [0, 0, 0],
+    [255, 0, 0],
+    [255, 255, 0],
+    [0, 255, 0],
+    [0, 255, 255],
+    [0, 0, 255],
+    [255, 0, 255],
+    [128, 0, 0],
+    [128, 128, 0],
+    [0, 128, 0],
+    [0, 128, 128],
+    [0, 0, 128],
+    [128, 0, 128],
+    [255, 42, 0],
+    [170, 255, 0],
+    [0, 255, 42],
+    [0, 170, 255],
+    [42, 0, 255],
+    [255, 0, 170],
+    [128, 42, 0],
+    [85, 128, 0],
+    [0, 128, 42],
+    [0, 85, 128],
+    [42, 0, 128],
+    [128, 0, 85],
+    [255, 170, 0],
+    [85, 255, 0],
+    [0, 255, 170],
+    [0, 85, 255],
+    [170, 0, 255],
+    [255, 0, 85],
+    [128, 85, 0],
+    [42, 128, 0],
+    [0, 128, 85],
+    [0, 42, 128],
+    [85, 0, 128],
+    [128, 0, 42]
+    ])
+
 def get_ade20k_name():
   return _ADE20K
 
@@ -341,6 +384,9 @@ def get_mapillary_vistas_name():
 def get_pascal_name():
   return _PASCAL
 
+
+def get_wood_name():
+  return _WOOD
 
 def bit_get(val, idx):
   """Gets the bit value.
@@ -375,6 +421,8 @@ def create_label_colormap(dataset=_PASCAL):
     return create_mapillary_vistas_label_colormap()
   elif dataset == _PASCAL:
     return create_pascal_label_colormap()
+  elif dataset == _WOOD:
+    return create_wood_label_colormap()
   else:
     raise ValueError('Unsupported dataset.')
 

@@ -51,6 +51,11 @@ References:
 import collections
 import os.path
 import tensorflow as tf
+import configparser
+config = configparser.ConfigParser(allow_no_value=True)    # 注意大小寫
+config.read('C:/tensorflow/models/research/deeplab/config.ini')   # 配置檔案的路徑
+
+Section = config['deeplab']
 
 slim = tf.contrib.slim
 
@@ -109,10 +114,24 @@ _ADE20K_INFORMATION = DatasetDescriptor(
 )
 
 
+
+
+_WOOD_INFORMATION = DatasetDescriptor(
+    splits_to_sizes={
+        'train': Section['train_splits'],
+        'train_aug': 0,
+        'trainval': 0,
+        'val': 0,
+    },
+    num_classes=config['export']['num_classes'],
+    ignore_label=255,
+)
+
 _DATASETS_INFORMATION = {
     'cityscapes': _CITYSCAPES_INFORMATION,
     'pascal_voc_seg': _PASCAL_VOC_SEG_INFORMATION,
     'ade20k': _ADE20K_INFORMATION,
+    'wood': _WOOD_INFORMATION,
 }
 
 # Default file pattern of TFRecord of TensorFlow Example.
