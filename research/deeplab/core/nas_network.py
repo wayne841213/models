@@ -257,7 +257,14 @@ def hnasnet(images,
   ]
   used_hiddenstates = [1, 1, 0, 0, 0, 0, 0]
   hiddenstate_indices = [1, 0, 1, 0, 3, 1, 4, 2, 3, 5]
-  backbone = [0, 0, 0, 1, 2, 1, 2, 2, 3, 3, 2, 1]
+  if output_stride == 8:
+    backbone = [0, 0, 0, 1, 2, 1, 2, 2, 3, 3, 2, 1]
+  elif output_stride == 16:
+    backbone = [0, 0, 0, 1, 2, 1, 2, 2, 3, 3, 2, 2]
+  elif output_stride == 32:
+    backbone = [0, 0, 0, 1, 2, 1, 2, 2, 3, 3, 2, 3]
+  else:
+    raise ValueError('Unsupported output_stride ', output_stride)
   cell = NASBaseCell(hparams.num_conv_filters,
                      operations,
                      used_hiddenstates,
